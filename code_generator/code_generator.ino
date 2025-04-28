@@ -2,15 +2,18 @@
 // netids: lluca5, hchen250, lguev2
 // UINs: 667695865, 675227500, 657508441
 
+// Group Number: 23
+
+// Project Title: WiFi QR Code Connector
+
+// Abstract: 
+// Arduino system that enables WiFi access through automatically generating QR codes
+// using three Arduinos to manage network setup, QR code generation, and display.
+// It is an independent system for homeowners aiming to simplify the process to access home
+// internet for their guests
+
 // QR Code Generator Arduino
 // Description: Grabs data from network management Arduino, parse it, format it, and then send to display Arduino.
-/* 
-  CODE FOR THE GENERATOR ARDUINO
-  This will grab the necessary data (SSID, network type, password) from the
-  Network admin Arduino, format it as a string, then as a QR Code, then as a
-  bitmap array, then send it off to the Display Arduino for displaying.
-  Author: Lance Guevarra, 657508441, lguev2
-*/
 
 #include <Wire.h>
 #include <SoftwareSerial.h>

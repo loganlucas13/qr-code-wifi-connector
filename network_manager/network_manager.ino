@@ -2,6 +2,16 @@
 // netids: lluca5, hchen250, lguev2
 // UINs: 667695865, 675227500, 657508441
 
+// Group Number: 23
+
+// Project Title: WiFi QR Code Connector
+
+// Abstract: 
+// Arduino system that enables WiFi access through automatically generating QR codes
+// using three Arduinos to manage network setup, QR code generation, and display.
+// It is an independent system for homeowners aiming to simplify the process to access home
+// internet for their guests
+
 // Network Management Arduino
 // Description: get network data, send to QR generation Arduino, and display current state + statistics of network from display Arduino.
 
