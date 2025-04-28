@@ -1,3 +1,9 @@
+// Logan Lucas, Henry Chen, Lance Guevarra
+// netids: lluca5, hchen250, lguev2
+// UINs: 667695865, 675227500, 657508441
+
+// QR Code Generator Arduino
+// Description: Grabs data from network management Arduino, parse it, format it, and then send to display Arduino.
 /* 
   CODE FOR THE GENERATOR ARDUINO
   This will grab the necessary data (SSID, network type, password) from the
@@ -27,14 +33,11 @@ const int timeInterval = 1000;
 // stores the last time we checked
 unsigned long lastMillis = 0;
 
-char receive[16]; // what we get from the client
 bool stringReceived = false;
 bool signalReceived = false;
 bool hasBeenSent = false;
 
 void grabDataNeeded(char* buffer){
-  Serial.print("buffer: ");
-  Serial.println(buffer);
   sscanf(buffer, "%16[^:]:%64[^\n]", SSID, password);
   if (strcmp(password, "none") == 0) {
     strcpy(type, "nopass");
@@ -53,10 +56,10 @@ void grabDataNeeded(char* buffer){
   Serial.println(password);
 }
 
-
+// sends parsed data to the display Arduino
 void sendData() {
   displayArduino.write(qrstring);
-  hasBeenSent = true;
+  hasBeenSent = true; // make sure we only send once
 }
 
 void setup() {
@@ -65,14 +68,6 @@ void setup() {
   displayArduino.begin(9600);
 }
 
-/*
-  How this code works:
-  1. we connect to the 1st arduino thru Serial, so that we can grab the network data from it
-  2. we convert that data in to a specific format for the 3rd arduino
-  3. we connect to the 3rd arduino thru wifi
-  4. we send the qr code string to the 3rd arduino and wait for it to give us back some data
-  5. once we receive the signal, we send that signal to the 1st one so they can know that someone connected
-*/
 
 void loop() {
   unsigned long curMillis = millis();
@@ -80,7 +75,7 @@ void loop() {
   if ((curMillis - lastMillis) >= timeInterval) {
     lastMillis = curMillis;
     
-    // Step 1: Check for new data from Arduino 1
+    // check for data from Arduino 1
     if (!stringReceived) {
       if (Serial1.available() > 0) {
         int n = Serial1.readBytesUntil('\n', buf, sizeof(buf) - 1);
@@ -91,7 +86,7 @@ void loop() {
       }
     }
 
-    // Step 2: If we have data, process it and prepare QR string
+    // if we have unsent data, parse it and send to display Arduino
     if (stringReceived && !hasBeenSent) {
       grabDataNeeded(buf);
 

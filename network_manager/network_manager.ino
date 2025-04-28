@@ -1,5 +1,9 @@
+// Logan Lucas, Henry Chen, Lance Guevarra
+// netids: lluca5, hchen250, lguev2
+// UINs: 667695865, 675227500, 657508441
+
 // Network Management Arduino
-// Purpose: get network data, send to QR generation Arduino, and display current state + statistics of network
+// Description: get network data, send to QR generation Arduino, and display current state + statistics of network from display Arduino.
 
 #include <LiquidCrystal_I2C.h>
 #include <SoftwareSerial.h>
@@ -168,6 +172,7 @@ void updateUserCount() {
   if (displayArduino.available() > 0) {
     char c = displayArduino.read();
 
+    // uses 'U' as a marker to update
     if (c == 'U') {
       userCount++;
       char buffer[16];

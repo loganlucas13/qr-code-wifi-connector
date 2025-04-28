@@ -1,3 +1,10 @@
+// Logan Lucas, Henry Chen, Lance Guevarra
+// netids: lluca5, hchen250, lguev2
+// UINs: 667695865, 675227500, 657508441
+
+// Display Arduino
+// Description: Get parsed QR code string from generator Arduino, then draw to OLED display. Also, update number of users from button press to the network manager Arduino.
+
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
@@ -24,6 +31,7 @@ char wifiBuffer[128];
 bool dataReceived = false;
 bool isBuzzerActive = false;
 
+// data for the potentiometer to adjust the buzzer frequency
 int buzzerFrequency = 200;
 const int minFrequency = 100;
 const int maxFrequency = 2000;
@@ -43,13 +51,14 @@ void setup() {
   pinMode(countButton, INPUT);
   pinMode(potentiometer, INPUT);
 
+  // initialize OLED screen
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
-  display.display();
+  display.display(); // display blank screen so that previous iterations don't hang
 }
 
 void loop() {
-  updateBuzzerFrequency();
+  updateBuzzerFrequency(); // checks potentiometer value
 
   int reading = digitalRead(countButton);
 
@@ -63,6 +72,7 @@ void loop() {
     }
   }
 
+  // sends a signal to the network manager Arduino to show that a new user has connected
   if (reading == HIGH && reading != buttonState) {
     Serial1.write("U");
     tone(buzzer, buzzerFrequency);
@@ -70,6 +80,7 @@ void loop() {
     isBuzzerActive = true;
   }
   
+  // stop buzzer after 200 milliseconds
   if (isBuzzerActive && millis() - buzzerStartTime >= 200) {
     noTone(buzzer);
     isBuzzerActive = false;
@@ -77,6 +88,7 @@ void loop() {
 
   buttonState = reading;
 
+  // get string from generator Arduino
   if (generatorArduino.available() > 0 && !dataReceived) {
     int n = generatorArduino.readBytesUntil('\n', wifiBuffer, sizeof(wifiBuffer) - 1);
     wifiBuffer[n] = '\0';
@@ -90,6 +102,7 @@ void loop() {
   }
 }
 
+// draws data to the screen based on the 'text' parameter
 void generateQRCode(const char* text) {
   QRCode qrcode;
   uint8_t qrcodeData[qrcode_getBufferSize(3)];
@@ -114,6 +127,7 @@ void generateQRCode(const char* text) {
   display.display();
 }
 
+// gets data from potentiometer and adjusts frequency based on results
 void updateBuzzerFrequency() {
   int reading = analogRead(potentiometer);
   buzzerFrequency = map(reading, 0, 1023, minFrequency, maxFrequency);
